@@ -1,3 +1,5 @@
+# TP1 Exercise
+
 from collections import defaultdict
 
 class Graph:
@@ -25,22 +27,22 @@ def main():
     graph = Graph()
     
     edges = [
-        (1, 2), (2, 5),(3, 6), 
-        (4, 5), (4, 6), (4, 7), (6, 7)
+        (1, 2), 
+        (2, 5), 
+        (3, 6), (4, 6), (4, 7), (6, 7)
     ]
     
     for u, v in edges:
         graph.add_edge(u, v)
     
-    # Input nodes
     try:
         start = int(input("Enter the start node: "))
         end = int(input("Enter the end node: "))
         
         if graph.is_path_exist(start, end):
-            print("True: There is a path between node {} and node {}".format(start, end))
+            print("True: Path exists between node {} and node {}".format(start, end))
         else:
-            print("False: There is no path between node {} and node {}".format(start, end))
+            print("False: No path exists between node {} and node {}".format(start, end))
     except ValueError:
         print("Please enter valid integers for nodes.")
 
