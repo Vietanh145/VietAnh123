@@ -1,30 +1,61 @@
 # TP2 Exercise
 
-import igraph as ig
+def perform_dfs(node, component, graph, visited_nodes):
+    stack = [node]  
+    while stack:
+        current_node = stack.pop()  
+        if current_node not in visited_nodes:
+            visited_nodes.add(current_node)  
+            component.add(current_node + 1)  
+            neighbors_to_explore = [index for index, is_connected in enumerate(graph[current_node]) if is_connected == 1 and index not in visited_nodes]
+            stack.extend(neighbors_to_explore)  
 
-edges = [
-    (1, 2), (1, 4), (2, 3), (2, 6), 
-    (3, 7), (3, 8), (4, 5), (5, 5), 
-    (5, 9), (6, 5), (6, 7), 
-    (7, 5), (7, 8), (8, 9),
-]
+def get_connected_components(graph, directed=True):
+    visited_nodes = set()  
+    components = []  
 
-nodes = sorted(set(u for edge in edges for u in edge))
-node_to_index = {node: i for i, node in enumerate(nodes)}
-edges_mapped = [(node_to_index[u], node_to_index[v]) for u, v in edges]
+    for node in range(len(graph)):
+        if node not in visited_nodes:  
+            current_component = set()  
+            perform_dfs(node, current_component, graph, visited_nodes)  
+            components.append(current_component) 
+    return components
 
-G = ig.Graph(directed=True)
-G.add_vertices(len(nodes))
-G.add_edges(edges_mapped)
+def count_components(directed_graph):
+    undirected_graph = []
+    for i in range(len(directed_graph)):
+        row = []
+        for j in range(len(directed_graph)):
+            if directed_graph[i][j] == 1 or directed_graph[j][i] == 1:
+                row.append(1) 
+            else:
+                row.append(0)
+        undirected_graph.append(row)
+    directed_components = get_connected_components(directed_graph, directed=True)
+    undirected_components = get_connected_components(undirected_graph, directed=False)
 
-adj_matrix = G.get_adjacency()
+    return {"strong": directed_components, "weak": undirected_components}
 
-print("Adjacency Matrix:")
-for row in adj_matrix: 
-    print(list(row)) 
+if __name__ == '__main__':
+    graph = [
+        [0, 1, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0, 1],
+        [0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 1, 1, 0, 1, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+    
+    result = count_components(graph)
 
-weakly_connected = len(G.connected_components(mode="weak"))
-strongly_connected = len(G.connected_components(mode="strong"))
-
-print(f"Weakly Connected Components: {weakly_connected}")
-print(f"Strongly Connected Components: {strongly_connected}")
+# Print output 
+    print("Strong Components (Strongly Connected):")
+    for component in result["strong"]:
+        print(f"Component: {component}")
+    
+    print("\nWeak Components (Weakly Connected):")
+    for component in result["weak"]:
+        print(f"Component: {component}")
