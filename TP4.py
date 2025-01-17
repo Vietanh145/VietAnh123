@@ -47,6 +47,10 @@ def prim_mst(graph, total_nodes, start):
                         if graph[u, v] < smallest[2]:
                             smallest = (u, v, graph[u, v])
 
+        if smallest[0] is None or smallest[1] is None:
+            print("MST cannot be completed from the given root node.")
+            return [], 0
+
         u, v, w = smallest
         mst_edges.append((u + 1, v + 1, w))
         mst_weight += w
@@ -97,15 +101,25 @@ def kruskal_mst(graph, total_nodes):
 
     return mst_edges, mst_weight
 
-root = int(input("\nEnter the root node for Prim's Algorithm: ")) - 1
+while True:
+    try:
+        root = int(input("\nEnter the root node for Prim's Algorithm (1-9): ")) - 1
+        if root < 0 or root >= nodes:
+            raise ValueError("Root node must be between 1 and 9.")
+        break
+    except ValueError as e:
+        print(f"Invalid input: {e}")
 
 prim_result, prim_total = prim_mst(matrix, nodes, root)
-kruskal_result, kruskal_total = kruskal_mst(matrix, nodes)
+if prim_result:
+    print("\nMinimum Spanning Tree (MST) from Prim's Algorithm:")
+    for edge in prim_result:
+        print(f"Edge: {edge[0]} - {edge[1]}, Weight: {edge[2]}")
+    print(f"Total weight of MST: {prim_total}")
+else:
+    print("No MST could be formed from the given root node.")
 
-print("\nMinimum Spanning Tree (MST) from Prim's Algorithm:")
-for edge in prim_result:
-    print(f"Edge: {edge[0]} - {edge[1]}, Weight: {edge[2]}")
-print(f"Total weight of MST: {prim_total}")
+kruskal_result, kruskal_total = kruskal_mst(matrix, nodes)
 
 print("\nMinimum Spanning Tree (MST) from Kruskal's Algorithm:")
 for edge in kruskal_result:
